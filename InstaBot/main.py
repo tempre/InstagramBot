@@ -1,36 +1,34 @@
-from selenium import webdriver
+#from selenium import webdriver
 from time import sleep
+from Drivers import driver
+from Logins import Login
 
-um = "nslone0"
-pw = "lonez09"
+um = Login.LoginUM()
+pw = Login.LoginPW()
 
 class InstaBot:
 
     def __init__(self, um, pw):
-        self.driver = webdriver.Opera(executable_path = 'Atom\InstagramBot\InstagramBot\InstaBot\Drivers\operadriver.exe')
+        #self.driver = webdriver.Opera(executable_path = 'Atom\InstagramBot\InstagramBot\InstaBot\Drivers\operadriver.exe')
 
-        self.driver.get('https://instagram.com')
+        self.browser = driver.driver();
+
         sleep(4)
-        self.driver.find_element_by_xpath('//input[@name=\"username\"]')\
+        self.browser.find_element_by_xpath('//input[@name=\"username\"]')\
         .send_keys(um)
-        self.driver.find_element_by_xpath('//input[@name=\"password\"]')\
+
+        self.browser.find_element_by_xpath('//input[@name=\"password\"]')\
         .send_keys(pw)
-        self.driver.find_element_by_xpath('//button[@type="submit"]')\
+
+        self.browser.find_element_by_xpath('//button[@type="submit"]')\
         .click()
 
         sleep(3)
-        self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
+        self.browser.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
         .click()
 
         sleep(3)
-        self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
+        self.browser.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
         .click()
-
-    def getFollowers(self):
-        self.driver.find_element_by_xpath("//a[contains(@href, '/{}')]".format(um))\
-            .click()
-        self.driver.find_element_by_xpath("//a[contains(@href, '/{}')]".format("follower"))\
-            .click()
 
 botIM = InstaBot(um, pw)
-botIM.getFollowers()
