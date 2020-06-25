@@ -1,6 +1,7 @@
 from time import sleep
 from random import randint
 from Functions import LikeAction
+from Functions import Scroll
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -20,19 +21,21 @@ def LikePost(browser, Max, tags):
 
 #pragma region Setting Values
 
+    start = randint(5,10)
     low = Max - 5
     high = Max + 5
     amount_to_like = randint(low, high)
 
-    print('Currently Liking' + str(amount_to_like) + 'photos!')
+    print('Currently Liking ' + str(amount_to_like) + ' photos!')
 #pragma endregion
 
 #pragma region Start Liking
-
     count = 0
     while count < amount_to_like:
-        count = LikeAction.likePost(browser, count, pageMovement, tags)
+        count = LikeAction.likePost(browser, count, pageMovement, tags, 10)
 
+        if(count == amount_to_like):
+            print("done!")
 
 #pragma endregion
 #pragma endregion
