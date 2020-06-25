@@ -1,7 +1,6 @@
 from time import sleep
 from random import randint
 from Functions import LikeAction
-from Functions import Scroll
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
