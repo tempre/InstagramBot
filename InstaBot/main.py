@@ -3,7 +3,7 @@ from time import sleep
 from Drivers import driver
 from Logins import Login
 from config import likeConfig
-from Functions import LikePost
+from Functions import LikePost, GetFollowers
 from random import randint
 
 um = Login.LoginUM()
@@ -12,44 +12,51 @@ pw = Login.LoginPW()
 
 class InstaBot:
 
+#pragma region Init
+
     def __init__(self, um, pw):
         self.browser = driver.driver();
 
         self.browser.get('https://www.instagram.com/')
-        #pragma region Login
+
+#pragma region Login
+
         sleep(randint(3,5))
         self.browser.find_element_by_xpath('//input[@name=\"username\"]')\
         .send_keys(um)
 
         self.browser.find_element_by_xpath('//input[@name=\"password\"]')\
         .send_keys(pw)
-        #pragma regionend
 
-        #pragma region Instagram Auth Junk
+#pragma endregion
+#pragma endregion
 
-        #checking for instagram popup for saving login info
+#pragma region Instagram Auth Junk
+
+#checking for instagram popup for saving login info
         sleep(randint(3,5))
         if self.browser.find_element_by_xpath("//*[@class='pV7Qt        DPiy6            Igw0E     IwRSH      eGOV_         _4EzTm                                                                                                               qhGB0 ZUqME']"):
                 self.browser.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
                 .click()
 
-        #checking for instagram popup for notifcations
+#checking for instagram popup for notifcations
         sleep(randint(3,4))
         if self.browser.find_element_by_xpath("/html/body/div[4]/div/div/div/div[2]/h2"):
             self.browser.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
             .click()
 
-        #pragma end
+#pragma endregion
 
-    def getFollowers(self, um):
-        self.browser.get("https://www.instagram.com/" + um + "/")
-        sleep(randint(3,4))
-
-        self.browser.find_element_by_xpath("//a[contains(@href,'/follower')]")\
-        .click()
+#pragma region Actions
 
     def startLikingPost(self):
         LikePost.LikePost(self.browser, likeConfig['likeMAX'], likeConfig['tagForLikes'])
 
+    def getFollowersFromAccount(self):
+        GetFollowers.getFollowers(self.browser, 'chicxs.lindos', 25)
+
+#pragma endregion
+
 botIM = InstaBot(um, pw)
-botIM.startLikingPost()
+#botIM.startLikingPost()
+botIM.getFollowersFromAccount()
