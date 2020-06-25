@@ -2,6 +2,8 @@
 from time import sleep
 from Drivers import driver
 from Logins import Login
+from config import likeConfig
+from Functions import LikePost
 
 um = Login.LoginUM()
 pw = Login.LoginPW()
@@ -45,5 +47,8 @@ class InstaBot:
         self.browser.find_element_by_xpath("//a[contains(@href,'/follower')]")\
         .click()
 
+    def startLikingPost(self):
+        LikePost.LikePost(self.browser, likeConfig['likeMAX'], likeConfig['tagForLikes'])
+
 botIM = InstaBot(um, pw)
-botIM.getFollowers(um)
+botIM.startLikingPost()
