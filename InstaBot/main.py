@@ -86,8 +86,10 @@ botIM = InstaBot()
 
 class AppLogin(QWidget):
 
+    keyPressed = QtCore.pyqtSignal(QtCore.QEvent)
+
     def __init__(self):
-        super().__init__()
+        super(AppLogin, self).__init__()
         self.setStyleSheet("background-color: white;")
         self.title = 'Azul Instagram Bot'
         self.left = 10
@@ -121,7 +123,7 @@ class AppLogin(QWidget):
                           self.pixmapLogo.height())
 
         self.labelTempre = QLabel(self)
-        self.labelTempre.setFont(QFont('Arial', 20))
+        self.labelTempre.setFont(QFont('Arial', 15))
         self.labelTempre.setText("@tempre")
         self.labelTempre.setStyleSheet("padding-bottom : 65px")
         self.labelTempre.setAlignment(QtCore.Qt.AlignCenter)
@@ -163,7 +165,11 @@ class AppLogin(QWidget):
 
         print("Logging in...")
 
+        self.close()
+
         botIM.startInstagram(um, pw)
+
+        self.next=MainWindow()
 
     def center(self):
         qr = self.frameGeometry()
@@ -177,8 +183,22 @@ class AppLogin(QWidget):
         self.confirmLoginButton.setEnabled(False)
         botIM.startInstagram(um, pw)
 
+class MainWindow(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.setStyleSheet("background-color: white;")
+        self.title = 'Azul Instagram Bot'
+        self.left = 10
+        self.top = 10
+        self.width = 1280
+        self.height = 720
+        self.setFixedSize(self.width, self.height)
+        self.show()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = AppLogin()
+    #mw = MainWindow()
     sys.exit(app.exec_())
