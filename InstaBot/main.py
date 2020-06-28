@@ -23,6 +23,7 @@ from config import likeConfig
 from Functions import LikePost, GetFollowers
 from random import randint
 import pyfiglet
+import ctypes
 
 
 class InstaBot:
@@ -90,6 +91,7 @@ class AppLogin(QWidget):
 
     def __init__(self):
         super(AppLogin, self).__init__()
+        self.setWindowIcon(QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
         self.setStyleSheet("background-color: white;")
         self.title = 'Azul Instagram Bot'
         self.left = 10
@@ -187,6 +189,7 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
+        #self.setWindowIcon(QtGui.QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\AppLogo.png'))
         self.setStyleSheet("background-color: white;")
         self.title = 'Azul Instagram Bot'
         self.left = 10
@@ -201,4 +204,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = AppLogin()
     #mw = MainWindow()
+
     sys.exit(app.exec_())
