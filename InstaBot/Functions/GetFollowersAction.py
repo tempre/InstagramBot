@@ -1,3 +1,18 @@
+'''
+   ▄████████  ▄███████▄  ███    █▄   ▄█
+  ███    ███ ██▀     ▄██ ███    ███ ███
+  ███    ███       ▄███▀ ███    ███ ███
+  ███    ███  ▀█▀▄███▀▄▄ ███    ███ ███
+▀███████████   ▄███▀   ▀ ███    ███ ███
+  ███    ███ ▄███▀       ███    ███ ███
+  ███    ███ ███▄     ▄█ ███    ███ ███▌    ▄
+  ███    █▀   ▀████████▀ ████████▀  █████▄▄██
+                                    ▀
+
+                @tempre
+'''
+
+
 from time import sleep
 from random import randint
 from selenium.webdriver.common.action_chains import ActionChains
@@ -14,15 +29,9 @@ def FollowerAction(browser, targetAccount, count, max):
         try:
             browser.find_element_by_xpath('//*[@class = "sqdOP  L3NKy   y3zKF     "]').click()
             count += 1
-            sleep(randint(1,2))
+            sleep(randint(1,3))
         except NoSuchElementException as e:
             print("No more accounts to follow, exiting")
-            return count = Max
-        finally:
-            try:
-                browser.find_element_by_xpath('/html/body/div[3]/div/div/div[2]/div[1]/h4')
-                return count = Max
-            except NoSuchElementException as e:
-                print(Not Following Suggested Accounts, exiting)
-            finally:
-                return count
+            count = max
+
+        return count
