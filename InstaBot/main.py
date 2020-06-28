@@ -19,14 +19,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from time import sleep
 from Drivers import driver
-from Logins import Login
 from config import likeConfig
 from Functions import LikePost, GetFollowers
 from random import randint
 import pyfiglet
 
-um = Login.LoginUM()
-pw = Login.LoginPW()
 
 class InstaBot:
 
@@ -39,7 +36,7 @@ class InstaBot:
 
 #pragma call Instagram Start
 
-    def startInstagram(self):
+    def startInstagram(self, um, pw):
 
         self.browser = driver.driver();
 
@@ -53,6 +50,8 @@ class InstaBot:
 
         self.browser.find_element_by_xpath('//input[@name=\"password\"]')\
         .send_keys(pw)
+
+        self.browser.find_element_by_xpath("//button[@type='submit']").click()
 
 #pragma endregion
 #pragma endregion
@@ -85,26 +84,34 @@ class InstaBot:
 
 botIM = InstaBot()
 
-class App(QWidget):
+class AppLogin(QWidget):
 
     def __init__(self):
         super().__init__()
         self.setStyleSheet("background-color: white;")
-        self.title = 'Insta Bot 1.0'
+        self.title = 'Azul Instagram Bot'
         self.left = 10
         self.top = 10
         self.width = 640
         self.height = 480
+        self.setFixedSize(self.width, self.height)
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle(self.title)
 
-        self.confirmLoginButton = QPushButton('Login to Instagram', self)
-        self.confirmLoginButton.setToolTip('Confirm Login')
-        self.confirmLoginButton.clicked.connect(self.on_confirmlogin)
-        self.confirmLoginButton.setEnabled(True)
-        self.confirmLoginButton.setMaximumWidth(200)
+        self.umLine = QLineEdit(self)
+        self.umLine.setPlaceholderText('Username')
+        self.umLine.setMaximumWidth(200)
+
+        self.pwLine = QLineEdit(self)
+        self.pwLine.setPlaceholderText('Password')
+        self.pwLine.setMaximumWidth(200)
+        self.pwLine.setEchoMode(QLineEdit.Password)
+
+        self.btn_submit = QPushButton(" LOGIN ")
+
+        self.btn_submit.clicked.connect(self.Submit_btn)
 
         self.labelLogo = QLabel(self)
         self.pixmapLogo = QPixmap('Atom\InstagramBot\InstagramBot\InstaBot\Images\Logo.png')
@@ -116,22 +123,27 @@ class App(QWidget):
         self.labelTempre = QLabel(self)
         self.labelTempre.setFont(QFont('Arial', 20))
         self.labelTempre.setText("@tempre")
-        self.labelTempre.setStyleSheet("padding-bottom : 125px")
+        self.labelTempre.setStyleSheet("padding-bottom : 65px")
         self.labelTempre.setAlignment(QtCore.Qt.AlignCenter)
 
-        #hbox = QHBoxLayout()
-        #hbox.addStretch(1)
         row = QHBoxLayout()
-        row.setSpacing(0)
+        row.setSpacing(10)
 
         qvBox = QVBoxLayout()
         qvBox.setAlignment(Qt.AlignTop)
+
         qvBox.addWidget(self.labelLogo)
         qvBox.addWidget(self.labelTempre)
-        qvBox.addWidget(self.confirmLoginButton, alignment=QtCore.Qt.AlignCenter)
+
+        qvBox.addWidget(self.umLine, alignment=QtCore.Qt.AlignCenter)
+        qvBox.addWidget(self.pwLine, alignment=QtCore.Qt.AlignCenter)
+
+        qvBox.addWidget(self.btn_submit, alignment=QtCore.Qt.AlignCenter)
+
+        #qvBox.addWidget(self.confirmLoginButton, alignment=QtCore.Qt.AlignCenter)
 
         row.addLayout(qvBox)
-        row.addSpacing(10)
+        row.addSpacing(5)
 
         #vbox = QVBoxLayout()
         #vbox.addStretch(1)
@@ -145,6 +157,14 @@ class App(QWidget):
         self.center()
         self.show()
 
+    def Submit_btn(self):
+        um = self.umLine.text()
+        pw = self.pwLine.text()
+
+        print("Logging in...")
+
+        botIM.startInstagram(um, pw)
+
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -155,10 +175,10 @@ class App(QWidget):
     def on_confirmlogin(self):
         print("Logging in...")
         self.confirmLoginButton.setEnabled(False)
-        botIM.startInstagram()
+        botIM.startInstagram(um, pw)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = App()
+    ex = AppLogin()
     sys.exit(app.exec_())
