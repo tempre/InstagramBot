@@ -10,6 +10,7 @@
                                     ▀
 
                 @tempre
+        https://twitter.com/nslonez
 '''
 
 import sys
@@ -67,7 +68,7 @@ class InstaBot:
             .click()
 
 #checking for instagram popup for notifcations
-        sleep(randint(3,4))
+        sleep(randint(3,5))
         if self.browser.find_element_by_xpath("/html/body/div[4]/div/div/div/div[2]/h2"):
             self.browser.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
                 .click()

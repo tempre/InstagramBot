@@ -10,6 +10,7 @@
                                     ▀
 
                 @tempre
+        https://twitter.com/nslonez
 '''
 
 from time import sleep
