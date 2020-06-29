@@ -21,10 +21,11 @@ from PyQt5.QtCore import *
 from time import sleep
 from Drivers import driver
 from config import likeConfig
-from Functions import LikePost, GetFollowers
+from Functions import LikePost, GetFollowers, GrabUserData
 from random import randint
 import pyfiglet
 import ctypes
+import urllib.request
 
 
 class InstaBot:
@@ -84,6 +85,10 @@ class InstaBot:
     def getFollowersFromAccount(self):
         GetFollowers.getFollowers(self.browser, likeConfig['accToGrabFollowers'], likeConfig['maxFollowers'])
 
+    def getProfilePicture(self):
+        src = GrabUserData.grabProfilePicture(self.browser, likeConfig['USERNAME'])
+        return src
+
 botIM = InstaBot()
 
 class AppLogin(QWidget):
@@ -104,6 +109,8 @@ class AppLogin(QWidget):
 
     def initUI(self):
         self.setWindowTitle(self.title)
+
+#pragma region Visual Attributes
 
         self.umLine = QLineEdit(self)
         self.umLine.setPlaceholderText('Username')
@@ -131,6 +138,11 @@ class AppLogin(QWidget):
         self.labelTempre.setStyleSheet("padding-bottom : 65px")
         self.labelTempre.setAlignment(QtCore.Qt.AlignCenter)
 
+
+#pragma endregion
+
+#pragma region Adding to Layouts
+
         row = QHBoxLayout()
         row.setSpacing(10)
 
@@ -145,32 +157,30 @@ class AppLogin(QWidget):
 
         qvBox.addWidget(self.btn_submit, alignment=QtCore.Qt.AlignCenter)
 
-        #qvBox.addWidget(self.confirmLoginButton, alignment=QtCore.Qt.AlignCenter)
-
         row.addLayout(qvBox)
         row.addSpacing(5)
-
-        #vbox = QVBoxLayout()
-        #vbox.addStretch(1)
-        #vbox.addWidget(self.labelLogo, 0, QtCore.Qt.AlignTop)
-        #vbox.addWidget(self.labelTempre)
-        #vbox.addWidget(self.confirmLoginButton)
-        #vbox.addLayout(hbox)
 
         self.setLayout(row)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.center()
         self.show()
 
+#pragma endregion
+
+#pragma region Functions
+
     def Submit_btn(self):
         um = self.umLine.text()
         pw = self.pwLine.text()
+
+        likeConfig['USERNAME'] = um
 
         print("Logging in...")
 
         self.close()
 
         botIM.startInstagram(um, pw)
+        likeConfig['PICTURE'] = botIM.getProfilePicture()
 
         self.next=MainWindow()
 
@@ -180,30 +190,43 @@ class AppLogin(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    @pyqtSlot()
-    def on_confirmlogin(self):
-        print("Logging in...")
-        self.confirmLoginButton.setEnabled(False)
-        botIM.startInstagram(um, pw)
 
 class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        #self.setWindowIcon(QtGui.QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\AppLogo.png'))
+        self.setWindowIcon(QtGui.QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
         self.setStyleSheet("background-color: white;")
         self.title = 'Azul Instagram Bot'
         self.left = 10
         self.top = 10
         self.width = 1280
         self.height = 720
-        self.setFixedSize(self.width, self.height)
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        print(likeConfig['USERNAME'])
+
+        hbox = QHBoxLayout(self)
+        data = urllib.request.urlopen(likeConfig['PICTURE']).read()
+        image = QImage()
+        image.loadFromData(data)
+
+        profilePicture = QLabel(self)
+        profilePicture.setPixmap(QPixmap(image))
+
+        hbox.addWidget(profilePicture)
+
+        self.setLayout(hbox)
+        #self.setGeometry(self.left, self.top, self.width, self.height)
+        #self.center()
         self.show()
+
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = AppLogin()
-    #mw = MainWindow()
-
+    #mw = MainWindow() #for testing purposes
     sys.exit(app.exec_())
