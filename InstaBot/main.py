@@ -10,7 +10,7 @@
                                     ▀
 
                 @tempre
-        https://twitter.com/nslonez
+          twitter.com/nslonez
 '''
 
 import sys
