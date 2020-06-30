@@ -51,8 +51,12 @@ class InstaBot:
         self.browser.find_element_by_xpath('//input[@name=\"username\"]')\
         .send_keys(um)
 
+        sleep(randint(3,6))
+
         self.browser.find_element_by_xpath('//input[@name=\"password\"]')\
         .send_keys(pw)
+
+        sleep(randint(2,4))
 
         self.browser.find_element_by_xpath("//button[@type='submit']").click()
 
@@ -190,7 +194,6 @@ class AppLogin(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-
 class MainWindow(QWidget):
 
     def __init__(self):
@@ -208,7 +211,8 @@ class MainWindow(QWidget):
         self.setWindowTitle(self.title)
         print(likeConfig['USERNAME'])
 
-        hbox = QHBoxLayout(self)
+        vbox = QVBoxLayout(self)
+
         data = urllib.request.urlopen(likeConfig['PICTURE']).read()
         image = QImage()
         image.loadFromData(data)
@@ -216,9 +220,13 @@ class MainWindow(QWidget):
         profilePicture = QLabel(self)
         profilePicture.setPixmap(QPixmap(image))
 
-        hbox.addWidget(profilePicture)
+        usernameShow = QLabel(self)
+        usernameShow.setText("Welcome, " + likeConfig['USERNAME'])
 
-        self.setLayout(hbox)
+        vbox.addWidget(profilePicture)
+        vbox.addWidget(usernameShow)
+
+        self.setLayout(vbox)
         #self.setGeometry(self.left, self.top, self.width, self.height)
         #self.center()
         self.show()
