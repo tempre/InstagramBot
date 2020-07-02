@@ -1,2 +1,4 @@
 # Azul InstagramBot
-<img align="center" src="https://i.imgur.com/EAoyo1R.png">
+<p align="center">
+  <img src="https://i.imgur.com/EAoyo1R.png">
+</p>
