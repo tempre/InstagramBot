@@ -1,30 +1,30 @@
 import os
 import glob
-import requests
 import urllib.request
 from time import sleep
-from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
+
+#region URL |Experimental |
 
 url = 'https://www.tumblr.com/search/%2335mm+film'
 
-#pragma region Remove TEMP IMAGE FILES
+#endregion
+
+#region Remove TEMP IMAGE FILES
 
 files = glob.glob('ImageDownloadTEMP/*')
 
 for f in files:
     os.remove(f)
 
-#pragma endregion
+#endregion
+
+#region Browser load / Initilize
 
 browser = webdriver.Chrome()
 
 browser.get(url)
 sleep(1)
-
-elem = browser.find_element_by_tag_name("body")
-
-response = requests.get(url)
 
 last_height = browser.execute_script("return document.body.scrollHeight")
 
@@ -32,6 +32,8 @@ number = 0
 id = 0
 number_alt = 0
 range_for_scroll = 10
+
+#region Grab Images and Authors and save them
 
 while True:
     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -55,8 +57,8 @@ while True:
                 print('AUTHOR = ' + author_src + '\n')
 
                 urllib.request.urlretrieve(''.join(new_src), 'ImageDownloadTEMP/' + str(id) + '.jpg')
-                f = open('ImageDownloadTEMP/' + str(id) + "_author.txt","w+")
-                f.write(author_src)
+                f = open('ImageDownloadTEMP/image_authors.txt',"a")
+                f.write("Image " + str(id) + ": " + str(author_src) + "\n")
                 f.close()
                 id += 1
             number += 1
@@ -67,3 +69,5 @@ while True:
     if new_height == last_height:
         break
     last_height = new_height
+
+#endregion
