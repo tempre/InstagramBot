@@ -3,21 +3,21 @@ import glob
 import urllib.request
 from time import sleep
 from selenium import webdriver
-from PIL import Image
+from pathlib import Path
 
 #region Params
 
 author_value = 'data-pin-url'
+
 #endregion
 
-#region URL |Experimental |
+#region URL
 
 url = 'https://www.tumblr.com/search/%2335mm+film'
-#url = 'https://www.pinterest.com/search/pins/?q=%2335mm%20film&rs=typed&term_meta[]=%2335mm%7Ctyped&term_meta[]=film%7Ctyped'
 
 #endregion
 
-#region Remove TEMP IMAGE FILES
+#region Remove TEMP IMAGE FILES / this can be modified
 
 files = glob.glob('ImageDownloadTEMP/*')
 
@@ -40,6 +40,8 @@ id = 0
 number_alt = 0
 range_for_scroll = 10
 
+#endregion
+
 #region Grab Images and Authors and save them
 
 while True:
@@ -51,7 +53,6 @@ while True:
     new_height = browser.execute_script("return document.body.scrollHeight")
 
     try:
-        #images = browser.find_elements_by_xpath('//*[@class="%s"]' % active_value)
         images = browser.find_elements_by_tag_name("img")
         print(str(images))
 
@@ -60,13 +61,12 @@ while True:
 
             author_src = images[number].get_attribute('data-pin-url')
 
-            new_src = []
-
-#not allowing gifs for my use
+            #new_src = []
 
             if "gif" not in image_src:
                 new_src = image_src
-                if len(new_src) != 0:
+
+                if len(image_src) != 0:
                     print(str(id) + " Image")
                     print('IMAGE = ' + new_src)
                     print('SIZE = ' + str(images[number].size))
@@ -77,11 +77,11 @@ while True:
                     height = dict.get('height')
 
                     if width > 150 and height > 150:
-                        urllib.request.urlretrieve(''.join(new_src), 'ImageDownloadTEMP/' + str(id) + '.jpg')
+                        urllib.request.urlretrieve(''.join(new_src), 'ImageDownloadTEMP/' + str(id) + Path(new_src).suffix)
                         f = open('ImageDownloadTEMP/image_authors.txt',"a")
                         f.write("Image " + str(id) + ": " + str(author_src) + "\n")
                         f.close()
-                    id += 1
+                        id += 1
             number += 1
     except IndexError:
         print("Waiting for page scroll...")
