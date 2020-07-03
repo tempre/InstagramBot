@@ -37,7 +37,6 @@ last_height = browser.execute_script("return document.body.scrollHeight")
 
 number = 0
 id = 0
-number_alt = 0
 range_for_scroll = 10
 
 #endregion
