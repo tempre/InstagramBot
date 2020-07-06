@@ -13,8 +13,7 @@
           twitter.com/nslonez
 '''
 
-
-from time import sleep
+from PyQt5 import QtTest
 from random import randint
 from Functions import LikeAction
 from selenium.webdriver.common.keys import Keys
@@ -31,23 +30,19 @@ def LikePost(browser, Max, tags):
 
 #pragma region Actions
     browser.get('https://www.instagram.com/explore/tags/' + tags + '/')
-    sleep(randint(1, 5))
+    QtTest.QTest.qWait(randint(2000, 3000))
 
 #pragma region Setting Values
 
-    low = Max - 5
-    high = Max + 5
-    amount_to_like = randint(low, high)
-
-    print('Currently Liking ' + str(amount_to_like) + ' photos!')
+    print('Currently Liking ' + str(Max) + ' photos!')
 #pragma endregion
 
 #pragma region Start Liking
     count = 0
-    while count < amount_to_like:
+    while count < Max:
         count = LikeAction.likePost(browser, count, pageMovement, tags, 10)
 
-    if(count == amount_to_like):
+    if(count == Max):
         print("done!")
 
 #pragma endregion

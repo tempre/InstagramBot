@@ -13,7 +13,7 @@
         https://twitter.com/nslonez
 '''
 
-import time
+from PyQt5 import QtTest
 from random import randint
 
 def likePost(browser, count, actions, tags, MaxSkip):
@@ -23,7 +23,7 @@ def likePost(browser, count, actions, tags, MaxSkip):
     if browser.current_url == 'https://www.instagram.com/explore/tags/' + tags + '/':
         postLocation = browser.find_elements_by_xpath('//*[@class="_9AhH0"]')
         postLocation[MaxSkip].click()
-        time.sleep(3)
+        QtTest.QTest.qWait(randint(2000, 3000))
 
 #pragma regionend
 
@@ -32,9 +32,9 @@ def likePost(browser, count, actions, tags, MaxSkip):
     try:
         browser.find_element_by_xpath('//*[@aria-label="Unlike"]')
         print('Post already liked.')
-        time.sleep(randint(3,4))
+        QtTest.QTest.qWait(randint(2000, 3000))
         actions.perform()
-        time.sleep(randint(2,3))
+        QtTest.QTest.qWait(randint(2000, 3000))
         return count
     except:
         # Like photo
@@ -45,10 +45,10 @@ def likePost(browser, count, actions, tags, MaxSkip):
 
 #pragma region Move to next post
 
-    time.sleep(randint(2,4))
+    QtTest.QTest.qWait(randint(2000, 3000))
     print('Post liked successfully. ' + str(count) + ' post(s) in total.')
     actions.perform()
-    time.sleep(randint(2,6))
+    QtTest.QTest.qWait(randint(2000, 3000))
     return count
 
 #pragma endregion

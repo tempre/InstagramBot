@@ -26,9 +26,20 @@ from random import randint
 import pyfiglet
 import ctypes
 import urllib.request
+import threading
+import os
+import datetime
+import git
+
+repo = git.Repo('Atom\InstagramBot\InstagramBot')
+
+master = repo.head.reference
+
+commits = list(repo.iter_commits('master', max_count=30))
+commitsString = ([c.message for c in commits])
 
 
-class InstaBot:
+class InstaBot():
 
 #pragma region Init
 
@@ -82,18 +93,199 @@ class InstaBot:
 
 #pragma region Actions
 
-    def startLikingPost(self):
-        LikePost.LikePost(self.browser, likeConfig['likeMAX'], likeConfig['tagForLikes'])
+    def startLikingPost(self, max, tag):
+        LikePost.LikePost(self.browser, max, tag)
         sleep(15)
 
-    def getFollowersFromAccount(self):
-        GetFollowers.getFollowers(self.browser, likeConfig['accToGrabFollowers'], likeConfig['maxFollowers'])
+    def getFollowersFromAccount(self, acc, max):
+        GetFollowers.getFollowers(self.browser, acc, max)
 
     def getProfilePicture(self):
         src = GrabUserData.grabProfilePicture(self.browser, likeConfig['USERNAME'])
         return src
 
 botIM = InstaBot()
+
+class Ui_MainWindow(object):
+
+    def Submit_follow(self):
+        botIM.getFollowersFromAccount(self.lineEdit_3.text(), int(self.lineEdit_4.text()))
+
+    def likeAction(self):
+        botIM.startLikingPost(int(self.lineEdit_2.text()), self.lineEdit.text())
+
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("Azul")
+        MainWindow.setWindowIcon(QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
+        MainWindow.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.profilePicture = QtWidgets.QLabel(self.centralwidget)
+        self.profilePicture.setGeometry(QtCore.QRect(10, 10, 151, 141))
+        self.profilePicture.setAutoFillBackground(True)
+        self.profilePicture.setFrameShape(QtWidgets.QFrame.Box)
+        self.profilePicture.setTextFormat(QtCore.Qt.AutoText)
+        self.profilePicture.setObjectName("profilePicture")
+        self.WelcomeMessage = QtWidgets.QLabel(self.centralwidget)
+        self.WelcomeMessage.setGeometry(QtCore.QRect(170, 10, 621, 31))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        font.setItalic(True)
+        self.WelcomeMessage.setFont(font)
+        self.WelcomeMessage.setAutoFillBackground(True)
+        self.WelcomeMessage.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.WelcomeMessage.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.WelcomeMessage.setLineWidth(5)
+        self.WelcomeMessage.setMidLineWidth(5)
+        self.WelcomeMessage.setScaledContents(False)
+        self.WelcomeMessage.setAlignment(QtCore.Qt.AlignCenter)
+        self.WelcomeMessage.setObjectName("WelcomeMessage")
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setGeometry(QtCore.QRect(170, 50, 20, 541))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.line.setFont(font)
+        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line.setLineWidth(5)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setObjectName("line")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(10, 190, 151, 391))
+        self.listWidget.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.listWidget.setAutoFillBackground(True)
+        self.listWidget.setFrameShape(QtWidgets.QFrame.Box)
+        self.listWidget.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.listWidget.setLineWidth(1)
+        self.listWidget.setAutoScroll(False)
+        self.listWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.listWidget.setProperty("showDropIndicator", False)
+        self.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
+        self.listWidget.setDefaultDropAction(QtCore.Qt.IgnoreAction)
+        self.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.listWidget.setTextElideMode(QtCore.Qt.ElideNone)
+        self.listWidget.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.listWidget.setMovement(QtWidgets.QListView.Free)
+        self.listWidget.setWordWrap(True)
+        self.listWidget.setObjectName("listWidget")
+        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.tabWidget.setGeometry(QtCore.QRect(190, 50, 601, 541))
+        self.tabWidget.setTabsClosable(False)
+        self.tabWidget.setMovable(True)
+        self.tabWidget.setObjectName("tabWidget")
+        self.LikeFunctions = QtWidgets.QWidget()
+        self.LikeFunctions.setObjectName("LikeFunctions")
+        self.label = QtWidgets.QLabel(self.LikeFunctions)
+        self.label.setGeometry(QtCore.QRect(4, -1, 591, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        font.setStrikeOut(False)
+        self.label.setFont(font)
+        self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.label.setLineWidth(0)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.line_2 = QtWidgets.QFrame(self.LikeFunctions)
+        self.line_2.setGeometry(QtCore.QRect(130, 30, 341, 20))
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.lineEdit = QtWidgets.QLineEdit(self.LikeFunctions)
+        self.lineEdit.setGeometry(QtCore.QRect(200, 50, 191, 20))
+        self.lineEdit.setObjectName("lineEdit")
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.LikeFunctions)
+        self.lineEdit_2.setGeometry(QtCore.QRect(200, 80, 191, 20))
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.pushButton = QtWidgets.QPushButton(self.LikeFunctions)
+        self.pushButton.clicked.connect(self.likeAction)
+        self.pushButton.setGeometry(QtCore.QRect(260, 110, 75, 23))
+        self.pushButton.setObjectName("pushButton")
+        self.tabWidget.addTab(self.LikeFunctions, "")
+        self.FollowFunctions = QtWidgets.QWidget()
+        self.FollowFunctions.setObjectName("FollowFunctions")
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.FollowFunctions)
+        self.lineEdit_3.setGeometry(QtCore.QRect(200, 50, 191, 20))
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.line_3 = QtWidgets.QFrame(self.FollowFunctions)
+        self.line_3.setGeometry(QtCore.QRect(130, 30, 341, 20))
+        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_3.setObjectName("line_3")
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.FollowFunctions)
+        self.lineEdit_4.setGeometry(QtCore.QRect(200, 80, 191, 20))
+        self.lineEdit_4.setObjectName("lineEdit_4")
+        self.pushButton_2 = QPushButton(self.FollowFunctions)
+        self.pushButton_2.clicked.connect(self.Submit_follow)
+        self.pushButton_2.setGeometry(QtCore.QRect(260, 110, 75, 23))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.label_2 = QtWidgets.QLabel(self.FollowFunctions)
+        self.label_2.setGeometry(QtCore.QRect(4, -1, 591, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        font.setStrikeOut(False)
+        self.label_2.setFont(font)
+        self.label_2.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label_2.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label_2.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.label_2.setLineWidth(0)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.tabWidget.addTab(self.FollowFunctions, "")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(10, 160, 151, 21))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setWeight(50)
+        self.label_3.setFont(font)
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        self.tabWidget.setCurrentIndex(1)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("Azul", "Azul"))
+
+        data = urllib.request.urlopen(likeConfig['PICTURE']).read()
+        image = QImage()
+        image.loadFromData(data)
+
+        self.profilePicture.setText(_translate("MainWindow", "PlaceHolder for Image"))
+        self.profilePicture.setScaledContents(True)
+        self.profilePicture.setPixmap(QPixmap(image))
+
+        for i in range(len(commitsString)):
+            item = QListWidgetItem(commitsString[i])
+            self.listWidget.addItem(item)
+
+        self.WelcomeMessage.setText(_translate("MainWindow", "Welcome, " + likeConfig['USERNAME']))
+        self.label_3.setText(_translate("MainWindow", "Updates"))
+
+        self.label_2.setText(_translate("MainWindow", "Follow Followers From Another Account."))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.FollowFunctions), _translate("MainWindow", "Follow Functions"))
+        self.lineEdit_3.setPlaceholderText('accToGrabFollowers')
+        self.lineEdit_4.setPlaceholderText('Max Followers to Grab')
+        self.pushButton_2.setText(_translate("MainWindow", "Submit"))
+
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.LikeFunctions), _translate("MainWindow", "Like Functions"))
+        self.label.setText(_translate("MainWindow", "Like Post From a Tag"))
+        self.pushButton.setText(_translate("MainWindow", "Submit"))
+        self.lineEdit.setPlaceholderText('tagForLikes')
+        self.lineEdit_2.setPlaceholderText('Max Amount to Like')
 
 class AppLogin(QWidget):
 
@@ -109,6 +301,7 @@ class AppLogin(QWidget):
         self.width = 640
         self.height = 480
         self.setFixedSize(self.width, self.height)
+
         self.initUI()
 
     def initUI(self):
@@ -186,7 +379,12 @@ class AppLogin(QWidget):
         botIM.startInstagram(um, pw)
         likeConfig['PICTURE'] = botIM.getProfilePicture()
 
-        self.next=MainWindow()
+        self.MainWindow = QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.MainWindow)
+        self.MainWindow.show()
+
+
 
     def center(self):
         qr = self.frameGeometry()
@@ -194,47 +392,12 @@ class AppLogin(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-class MainWindow(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.setWindowIcon(QtGui.QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
-        self.setStyleSheet("background-color: white;")
-        self.title = 'Azul Instagram Bot'
-        self.left = 10
-        self.top = 10
-        self.width = 1280
-        self.height = 720
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle(self.title)
-        print(likeConfig['USERNAME'])
-
-        vbox = QVBoxLayout(self)
-
-        data = urllib.request.urlopen(likeConfig['PICTURE']).read()
-        image = QImage()
-        image.loadFromData(data)
-
-        profilePicture = QLabel(self)
-        profilePicture.setPixmap(QPixmap(image))
-
-        usernameShow = QLabel(self)
-        usernameShow.setText("Welcome, " + likeConfig['USERNAME'])
-
-        vbox.addWidget(profilePicture)
-        vbox.addWidget(usernameShow)
-
-        self.setLayout(vbox)
-        #self.setGeometry(self.left, self.top, self.width, self.height)
-        #self.center()
-        self.show()
-
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
+    #MainWindow = QMainWindow()
+    #ui = Ui_MainWindow()
+    #ui.setupUi(MainWindow)
     ex = AppLogin()
-    #mw = MainWindow() #for testing purposes
     sys.exit(app.exec_())
