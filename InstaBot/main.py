@@ -21,7 +21,7 @@ from PyQt5.QtCore import *
 from time import sleep
 from Drivers import driver
 from config import likeConfig
-from Functions import LikePost, GetFollowers, GrabUserData
+from Functions import LikePost, GetFollowers, GrabUserData, getWatchStories
 from random import randint
 import pyfiglet
 import ctypes
@@ -95,10 +95,12 @@ class InstaBot():
 
     def startLikingPost(self, max, tag):
         LikePost.LikePost(self.browser, max, tag)
-        sleep(15)
 
     def getFollowersFromAccount(self, acc, max):
         GetFollowers.getFollowers(self.browser, acc, max)
+
+    def getStory(self, acc, amt):
+        getWatchStories.watchStoriesFromAccount(self.browser, acc, amt)
 
     def getProfilePicture(self):
         src = GrabUserData.grabProfilePicture(self.browser, likeConfig['USERNAME'])
@@ -114,10 +116,13 @@ class Ui_MainWindow(object):
     def likeAction(self):
         botIM.startLikingPost(int(self.lineEdit_2.text()), self.lineEdit.text())
 
+    def storyAction(self):
+        botIM.getStory(self.lineEdit_6.text(), int(self.lineEdit_5.text()))
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Azul")
         MainWindow.setWindowIcon(QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
-        MainWindow.resize(800, 600)
+        MainWindow.setFixedSize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.profilePicture = QtWidgets.QLabel(self.centralwidget)
@@ -154,7 +159,7 @@ class Ui_MainWindow(object):
         self.listWidget.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.listWidget.setAutoFillBackground(True)
         self.listWidget.setFrameShape(QtWidgets.QFrame.Box)
-        self.listWidget.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.listWidget.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.listWidget.setLineWidth(1)
         self.listWidget.setAutoScroll(False)
         self.listWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -165,6 +170,7 @@ class Ui_MainWindow(object):
         self.listWidget.setTextElideMode(QtCore.Qt.ElideNone)
         self.listWidget.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.listWidget.setMovement(QtWidgets.QListView.Free)
+        self.listWidget.setUniformItemSizes(True)
         self.listWidget.setWordWrap(True)
         self.listWidget.setObjectName("listWidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -202,7 +208,6 @@ class Ui_MainWindow(object):
         self.lineEdit_2.setGeometry(QtCore.QRect(200, 80, 191, 20))
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.pushButton = QtWidgets.QPushButton(self.LikeFunctions)
-        self.pushButton.clicked.connect(self.likeAction)
         self.pushButton.setGeometry(QtCore.QRect(260, 110, 75, 23))
         self.pushButton.setObjectName("pushButton")
         self.tabWidget.addTab(self.LikeFunctions, "")
@@ -219,8 +224,7 @@ class Ui_MainWindow(object):
         self.lineEdit_4 = QtWidgets.QLineEdit(self.FollowFunctions)
         self.lineEdit_4.setGeometry(QtCore.QRect(200, 80, 191, 20))
         self.lineEdit_4.setObjectName("lineEdit_4")
-        self.pushButton_2 = QPushButton(self.FollowFunctions)
-        self.pushButton_2.clicked.connect(self.Submit_follow)
+        self.pushButton_2 = QtWidgets.QPushButton(self.FollowFunctions)
         self.pushButton_2.setGeometry(QtCore.QRect(260, 110, 75, 23))
         self.pushButton_2.setObjectName("pushButton_2")
         self.label_2 = QtWidgets.QLabel(self.FollowFunctions)
@@ -240,6 +244,39 @@ class Ui_MainWindow(object):
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.tabWidget.addTab(self.FollowFunctions, "")
+        self.StoryFunctions = QtWidgets.QWidget()
+        self.StoryFunctions.setObjectName("StoryFunctions")
+        self.pushButton_3 = QtWidgets.QPushButton(self.StoryFunctions)
+        self.pushButton_3.setGeometry(QtCore.QRect(260, 110, 75, 23))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.lineEdit_5 = QtWidgets.QLineEdit(self.StoryFunctions)
+        self.lineEdit_5.setGeometry(QtCore.QRect(200, 80, 191, 20))
+        self.lineEdit_5.setObjectName("lineEdit_5")
+        self.label_4 = QtWidgets.QLabel(self.StoryFunctions)
+        self.label_4.setGeometry(QtCore.QRect(4, -1, 591, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        font.setStrikeOut(False)
+        self.label_4.setFont(font)
+        self.label_4.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label_4.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label_4.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.label_4.setLineWidth(0)
+        self.label_4.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_4.setObjectName("label_4")
+        self.line_4 = QtWidgets.QFrame(self.StoryFunctions)
+        self.line_4.setGeometry(QtCore.QRect(130, 30, 341, 20))
+        self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.lineEdit_6 = QtWidgets.QLineEdit(self.StoryFunctions)
+        self.lineEdit_6.setGeometry(QtCore.QRect(200, 50, 191, 20))
+        self.lineEdit_6.setObjectName("lineEdit_6")
+        self.tabWidget.addTab(self.StoryFunctions, "")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(10, 160, 151, 21))
         font = QtGui.QFont()
@@ -250,6 +287,11 @@ class Ui_MainWindow(object):
         self.label_3.setFont(font)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
+
+        self.pushButton.clicked.connect(self.likeAction)
+        self.pushButton_2.clicked.connect(self.Submit_follow)
+        self.pushButton_3.clicked.connect(self.storyAction)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -275,7 +317,7 @@ class Ui_MainWindow(object):
         self.WelcomeMessage.setText(_translate("MainWindow", "Welcome, " + likeConfig['USERNAME']))
         self.label_3.setText(_translate("MainWindow", "Updates"))
 
-        self.label_2.setText(_translate("MainWindow", "Follow Followers From Another Account."))
+        self.label_2.setText(_translate("MainWindow", "Follow Followers From Another Account"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FollowFunctions), _translate("MainWindow", "Follow Functions"))
         self.lineEdit_3.setPlaceholderText('accToGrabFollowers')
         self.lineEdit_4.setPlaceholderText('Max Followers to Grab')
@@ -286,6 +328,13 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Submit"))
         self.lineEdit.setPlaceholderText('tagForLikes')
         self.lineEdit_2.setPlaceholderText('Max Amount to Like')
+
+        self.label_4.setText(_translate("MainWindow", "View Stories From Another Account"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.StoryFunctions), _translate("MainWindow", "Story Functions"))
+        self.pushButton_3.setText(_translate("MainWindow", "Submit"))
+        self.lineEdit_6.setPlaceholderText('targetAccount')
+        self.lineEdit_5.setPlaceholderText('Max Amount of Stories')
+
 
 class AppLogin(QWidget):
 

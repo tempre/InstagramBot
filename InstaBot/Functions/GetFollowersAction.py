@@ -16,7 +16,6 @@
 
 from random import randint
 from PyQt5 import QtTest
-from selenium.webdriver.common.action_chains import ActionChains
 
 def FollowerAction(browser, targetAccount, count, max):
     if browser.current_url == 'https://www.instagram.com/' + targetAccount + '/followers/':
