@@ -23,6 +23,8 @@ from Drivers import driver
 from config import likeConfig
 from Functions import LikePost, GetFollowers, GrabUserData, getWatchStories
 from random import randint
+import numpy as np
+from PIL import Image, ImageDraw
 import pyfiglet
 import ctypes
 import urllib.request
@@ -31,7 +33,7 @@ import os
 import datetime
 import git
 
-repo = git.Repo('Atom\InstagramBot\InstagramBot')
+repo = git.Repo('InstagramBot\InstagramBot\.git')
 
 master = repo.head.reference
 
@@ -117,18 +119,22 @@ class Ui_MainWindow(object):
         botIM.startLikingPost(int(self.lineEdit_2.text()), self.lineEdit.text())
 
     def storyAction(self):
-        botIM.getStory(self.lineEdit_6.text(), int(self.lineEdit_5.text()))
+        list = self.lineEdit_6.text().split (",")
+        list = [i.strip() for i in list]
+        botIM.getStory(list, int(self.lineEdit_5.text()))
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Azul")
-        MainWindow.setWindowIcon(QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
+        MainWindow.setWindowIcon(QIcon('InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
         MainWindow.setFixedSize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.profilePicture = QtWidgets.QLabel(self.centralwidget)
         self.profilePicture.setGeometry(QtCore.QRect(10, 10, 151, 141))
-        self.profilePicture.setAutoFillBackground(True)
-        self.profilePicture.setFrameShape(QtWidgets.QFrame.Box)
+        self.profilePicture.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.profilePicture.setAutoFillBackground(False)
+        self.profilePicture.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.profilePicture.setLineWidth(1)
         self.profilePicture.setTextFormat(QtCore.Qt.AutoText)
         self.profilePicture.setObjectName("profilePicture")
         self.WelcomeMessage = QtWidgets.QLabel(self.centralwidget)
@@ -143,7 +149,7 @@ class Ui_MainWindow(object):
         self.WelcomeMessage.setLineWidth(5)
         self.WelcomeMessage.setMidLineWidth(5)
         self.WelcomeMessage.setScaledContents(False)
-        self.WelcomeMessage.setAlignment(QtCore.Qt.AlignCenter)
+        self.WelcomeMessage.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignCenter|QtCore.Qt.AlignVCenter)
         self.WelcomeMessage.setObjectName("WelcomeMessage")
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(170, 50, 20, 541))
@@ -332,7 +338,7 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "View Stories From Another Account"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.StoryFunctions), _translate("MainWindow", "Story Functions"))
         self.pushButton_3.setText(_translate("MainWindow", "Submit"))
-        self.lineEdit_6.setPlaceholderText('targetAccount')
+        self.lineEdit_6.setPlaceholderText('targetAccounts')
         self.lineEdit_5.setPlaceholderText('Max Amount of Stories')
 
 
@@ -342,7 +348,7 @@ class AppLogin(QWidget):
 
     def __init__(self):
         super(AppLogin, self).__init__()
-        self.setWindowIcon(QIcon('Atom\InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
+        self.setWindowIcon(QIcon('InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
         self.setStyleSheet("background-color: white;")
         self.title = 'Azul Instagram Bot'
         self.left = 10
@@ -372,7 +378,7 @@ class AppLogin(QWidget):
         self.btn_submit.clicked.connect(self.Submit_btn)
 
         self.labelLogo = QLabel(self)
-        self.pixmapLogo = QPixmap('Atom\InstagramBot\InstagramBot\InstaBot\Images\Logo.png')
+        self.pixmapLogo = QPixmap('InstagramBot\InstagramBot\InstaBot\Images\Logo.png')
         self.labelLogo.setPixmap(self.pixmapLogo)
         self.labelLogo.setAlignment(QtCore.Qt.AlignCenter)
         self.labelLogo.resize(self.pixmapLogo.width(),
@@ -440,8 +446,6 @@ class AppLogin(QWidget):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
