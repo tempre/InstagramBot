@@ -32,6 +32,8 @@ import threading
 import os
 import datetime
 import git
+import subprocess
+import win32gui
 
 repo = git.Repo('InstagramBot\InstagramBot\.git')
 
@@ -126,7 +128,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Azul")
         MainWindow.setWindowIcon(QIcon('InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
-        MainWindow.setFixedSize(800, 600)
+        MainWindow.resize(1300, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.profilePicture = QtWidgets.QLabel(self.centralwidget)
@@ -293,6 +295,18 @@ class Ui_MainWindow(object):
         self.label_3.setFont(font)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
+        self.browserWidget = QtWidgets.QWidget(self.centralwidget)
+        self.browserWidget.setGeometry(QtCore.QRect(800, 0, 551, 591))
+        self.browserWidget.setObjectName("browserWidget")
+
+        exePath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        p = subprocess.Popen(exePath)
+        sleep(0.25)
+
+        hwnd = win32gui.FindWindowEx(0, 0, "Chrome_WidgetWin_1", None)
+        print(hwnd)
+        self.window = QWindow.fromWinId(hwnd)
+        self.windowcontainer = self.browserWidget.createWindowContainer(self.window, self.browserWidget)
 
         self.pushButton.clicked.connect(self.likeAction)
         self.pushButton_2.clicked.connect(self.Submit_follow)
