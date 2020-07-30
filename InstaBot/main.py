@@ -109,27 +109,57 @@ class InstaBot():
         src = GrabUserData.grabProfilePicture(self.browser, likeConfig['USERNAME'])
         return src
 
+    def stopAction(self):
+        self.browser.get('https://www.instagram.com/')
+
+class Worker(QRunnable):
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+    @pyqtSlot()
+    def run(self):
+        self.fn(*self.args, **self.kwargs)
+
 botIM = InstaBot()
 
 class Ui_MainWindow(object):
 
     def Submit_follow(self):
-        botIM.getFollowersFromAccount(self.lineEdit_3.text(), int(self.lineEdit_4.text()))
-        print('done')
+        worker = Worker(self.execute_Follower)
+        self.threadpool.start(worker)
 
+    def execute_Follower(self):
+        botIM.getFollowersFromAccount(self.lineEdit_3.text(), int(self.lineEdit_4.text()))
 
     def likeAction(self):
+        worker = Worker(self.execute_Like)
+        self.threadpool.start(worker)
+
+    def execute_Like(self):
         botIM.startLikingPost(int(self.lineEdit_2.text()), self.lineEdit.text())
 
     def storyAction(self):
+        worker = Worker(self.execute_Story)
+        self.threadpool.start(worker)
+
+    def execute_Story(self):
         list = self.lineEdit_6.text().split (",")
         list = [i.strip() for i in list]
         botIM.getStory(list, int(self.lineEdit_5.text()))
 
     def setupUi(self, MainWindow, hwnd):
+
+        self.threadpool = QThreadPool()
+        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
+
         MainWindow.setObjectName("Azul")
         MainWindow.setWindowIcon(QIcon('InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
         MainWindow.resize(1379, 600)
+        MainWindow.setFixedSize(1379, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.profilePicture = QtWidgets.QLabel(self.centralwidget)

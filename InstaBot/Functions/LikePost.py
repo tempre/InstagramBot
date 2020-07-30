@@ -16,6 +16,7 @@
 from PyQt5 import QtTest
 from random import randint
 from Functions import LikeAction
+from PyQt5.QtCore import QThread
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -30,7 +31,7 @@ def LikePost(browser, Max, tags):
 
 #pragma region Actions
     browser.get('https://www.instagram.com/explore/tags/' + tags + '/')
-    QtTest.QTest.qWait(randint(2000, 3000))
+    QThread.sleep(3)
 
 #pragma region Setting Values
 

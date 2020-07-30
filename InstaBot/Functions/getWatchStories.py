@@ -1,6 +1,7 @@
 from PyQt5 import QtTest
 from Functions import WatchStoriesAction
 from random import randint
+from PyQt5.QtCore import QThread
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -13,9 +14,9 @@ def watchStoriesFromAccount(browser, targetAccount, TargetAmount):
     try:
         while acc_count < len(targetAccount):
             browser.get('https://www.instagram.com/' + targetAccount[acc_count] + '/')
-            QtTest.QTest.qWait(randint(2000, 3000))
+            QThread.sleep(5)
             browser.find_element_by_xpath("//a[contains(@href,'/follower')]").click()
-            QtTest.QTest.qWait(randint(2000, 3000))
+            QThread.sleep(5)
 
             count = 0
             while count < TargetAmount:
