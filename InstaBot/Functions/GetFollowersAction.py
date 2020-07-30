@@ -16,10 +16,12 @@
 
 from random import randint
 from PyQt5 import QtTest
+from PyQt5.QtCore import QThread
 
 def FollowerAction(browser, targetAccount, count, max):
     if browser.current_url == 'https://www.instagram.com/' + targetAccount + '/followers/':
-        QtTest.QTest.qWait(randint(2000, 3000))
+        #QtTest.QTest.qWait(randint(2000, 3000))
+        QThread.sleep(5)
 
         browser.execute_script('''
                                 var fDialog = document.querySelector('div[role="dialog"] .isgrP');
@@ -29,9 +31,16 @@ def FollowerAction(browser, targetAccount, count, max):
         try:
             browser.find_element_by_xpath('//*[@class = "sqdOP  L3NKy   y3zKF     "]').click()
             count += 1
-            QtTest.QTest.qWait(randint(2000, 3000))
+            #QtTest.QTest.qWait(randint(2000, 3000))
+            QThread.sleep(5)
         except NoSuchElementException as e:
             print("No more accounts to follow, exiting")
             count = max
 
+        return count
+
+    else:
+        print("Something failed. returning")
+        browser.get('https://www.instagram.com/')
+        count = max
         return count

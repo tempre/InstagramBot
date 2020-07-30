@@ -42,7 +42,6 @@ master = repo.head.reference
 commits = list(repo.iter_commits('master', max_count=30))
 commitsString = ([c.message for c in commits])
 
-
 class InstaBot():
 
 #pragma region Init
@@ -53,13 +52,13 @@ class InstaBot():
 
 
 #pragma call Instagram Start
-
-    def startInstagram(self, um, pw):
+    def startBrowser(self):
 
         self.browser = driver.driver();
 
-        self.browser.get('https://www.instagram.com/')
+    def startInstagram(self, um, pw):
 
+        self.browser.get('https://www.instagram.com/')
 #pragma region Login
 
         sleep(randint(3,5))
@@ -116,6 +115,8 @@ class Ui_MainWindow(object):
 
     def Submit_follow(self):
         botIM.getFollowersFromAccount(self.lineEdit_3.text(), int(self.lineEdit_4.text()))
+        print('done')
+
 
     def likeAction(self):
         botIM.startLikingPost(int(self.lineEdit_2.text()), self.lineEdit.text())
@@ -125,10 +126,10 @@ class Ui_MainWindow(object):
         list = [i.strip() for i in list]
         botIM.getStory(list, int(self.lineEdit_5.text()))
 
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, hwnd):
         MainWindow.setObjectName("Azul")
         MainWindow.setWindowIcon(QIcon('InstagramBot\InstagramBot\InstaBot\Images\Icon_ICO.ico'))
-        MainWindow.resize(1300, 600)
+        MainWindow.resize(1379, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.profilePicture = QtWidgets.QLabel(self.centralwidget)
@@ -295,18 +296,22 @@ class Ui_MainWindow(object):
         self.label_3.setFont(font)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
-        self.browserWidget = QtWidgets.QWidget(self.centralwidget)
-        self.browserWidget.setGeometry(QtCore.QRect(800, 0, 551, 591))
-        self.browserWidget.setObjectName("browserWidget")
+        self.widget = QtWidgets.QWidget(self.centralwidget)
+        self.widget.setGeometry(QtCore.QRect(800, 10, 571, 581))
+        self.widget.setMinimumSize(QtCore.QSize(571, 581))
+        self.widget.setBaseSize(QtCore.QSize(581, 581))
+        self.widget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.widget.setObjectName("widget")
 
-        exePath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
-        p = subprocess.Popen(exePath)
-        sleep(0.25)
+        #exePath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        #p = subprocess.Popen(exePath)
+        #sleep(0.25)
 
-        hwnd = win32gui.FindWindowEx(0, 0, "Chrome_WidgetWin_1", None)
         print(hwnd)
         self.window = QWindow.fromWinId(hwnd)
-        self.windowcontainer = self.browserWidget.createWindowContainer(self.window, self.browserWidget)
+        self.windowcontainer = self.widget.createWindowContainer(self.window, self.widget)
+        self.windowcontainer.setMinimumSize(QSize(571,581))
+        self.windowcontainer.setFixedSize(QSize(571,581))
 
         self.pushButton.clicked.connect(self.likeAction)
         self.pushButton_2.clicked.connect(self.Submit_follow)
@@ -354,7 +359,6 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "Submit"))
         self.lineEdit_6.setPlaceholderText('targetAccounts')
         self.lineEdit_5.setPlaceholderText('Max Amount of Stories')
-
 
 class AppLogin(QWidget):
 
@@ -445,13 +449,26 @@ class AppLogin(QWidget):
 
         self.close()
 
-        botIM.startInstagram(um, pw)
-        likeConfig['PICTURE'] = botIM.getProfilePicture()
+        botIM.startBrowser()
 
-        self.MainWindow = QMainWindow()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self.MainWindow)
-        self.MainWindow.show()
+        hwnd = win32gui.FindWindowEx(0, 0, "Chrome_WidgetWin_1", None)
+
+        if 'Google Chrome' in win32gui.GetWindowText(hwnd):
+            print("hook working!")
+
+            botIM.startInstagram(um, pw)
+            likeConfig['PICTURE'] = botIM.getProfilePicture()
+
+            self.MainWindow = QMainWindow()
+            self.ui = Ui_MainWindow()
+            self.ui.setupUi(self.MainWindow, hwnd)
+            self.MainWindow.show()
+        else:
+            print("Something went wrong, hook failed.")
+
+        print(win32gui.GetWindowText(hwnd))
+        print(hwnd)
+
 
 
 
